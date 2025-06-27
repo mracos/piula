@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Schedule Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main class="app">
+        <header class="header">
+            <h1>Medicine Schedule</h1>
+            <p>Calculate your medicine times</p>
+        </header>
+
+        <div class="calculator">
+            <div class="input-group">
+                <label for="startTime">Start Time:</label>
+                <input type="time" id="startTime" value="20:00">
+            </div>
+
+            <div class="input-group">
+                <label for="interval">Every X Hours:</label>
+                <input type="number" id="interval" min="1" max="24" value="8">
+            </div>
+
+            <div class="input-group">
+                <label for="doses">Number of Doses:</label>
+                <input type="number" id="doses" min="1" max="10" value="3">
+            </div>
+
+            <div class="results" id="results">
+                <h3>Your Schedule:</h3>
+                <ul id="scheduleList"></ul>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
