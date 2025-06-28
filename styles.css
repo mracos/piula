@@ -86,7 +86,7 @@ body {
     margin-bottom: 16px;
 }
 
-.hours-section, .calendar-section, .timeline-section {
+.hours-section, .calendar-section {
     margin-bottom: 32px;
 }
 
@@ -95,7 +95,7 @@ body {
     width: 100%;
 }
 
-.hours-section:last-child, .calendar-section:last-child, .timeline-section:last-child {
+.hours-section:last-child, .calendar-section:last-child {
     margin-bottom: 0;
 }
 
@@ -209,47 +209,6 @@ body {
     opacity: 0.7;
 }
 
-.timeline {
-    max-height: 300px;
-    overflow-y: auto;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    padding: 16px;
-    background: #fafafa;
-}
-
-.timeline-item {
-    display: flex;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid #e5e7eb;
-    gap: 16px;
-}
-
-.timeline-item:last-child {
-    border-bottom: none;
-}
-
-.timeline-date {
-    min-width: 80px;
-    font-size: 12px;
-    color: #6b7280;
-    font-weight: 500;
-}
-
-.timeline-time {
-    background: #f3f4f6;
-    padding: 6px 12px;
-    border-radius: 16px;
-    font-weight: 500;
-    color: #374151;
-    font-size: 14px;
-}
-
-.timeline-time.today {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
 
 @media (max-width: 480px) {
     .app {

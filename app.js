@@ -7,7 +7,6 @@ class MedicineApp {
         this.daysInput = document.getElementById('days');
         this.dailyHoursContainer = document.getElementById('dailyHours');
         this.calendarContainer = document.getElementById('calendar');
-        this.timelineContainer = document.getElementById('timeline');
         
         this.init();
     }
@@ -46,7 +45,6 @@ class MedicineApp {
         const result = MedicineCalculator.calculateSchedule(startTime, interval, days);
         this.renderDailyHours(result.dailyHours);
         this.renderCalendar(result.schedule);
-        this.renderTimeline(result.schedule);
     }
     
     renderDailyHours(dailyHours) {
@@ -106,43 +104,17 @@ class MedicineApp {
                 }
             }
             
+            
             grid.appendChild(dayElement);
         });
         
         this.calendarContainer.appendChild(grid);
     }
     
-    renderTimeline(schedule) {
-        this.timelineContainer.innerHTML = '';
-        
-        schedule.forEach(item => {
-            const timelineItem = document.createElement('div');
-            timelineItem.className = 'timeline-item';
-            
-            const dateElement = document.createElement('div');
-            dateElement.className = 'timeline-date';
-            dateElement.textContent = item.date.toLocaleDateString('en-US', { 
-                month: 'short', 
-                day: 'numeric' 
-            });
-            
-            const timeElement = document.createElement('div');
-            timeElement.className = 'timeline-time';
-            if (item.isToday) {
-                timeElement.classList.add('today');
-            }
-            timeElement.textContent = item.time;
-            
-            timelineItem.appendChild(dateElement);
-            timelineItem.appendChild(timeElement);
-            this.timelineContainer.appendChild(timelineItem);
-        });
-    }
     
     clearAll() {
         this.dailyHoursContainer.innerHTML = '<div style="color: #9ca3af; font-style: italic; padding: 16px;">Enter valid values to see daily hours</div>';
         this.calendarContainer.innerHTML = '<div style="color: #9ca3af; font-style: italic; padding: 16px;">Enter valid values to see calendar</div>';
-        this.timelineContainer.innerHTML = '<div style="color: #9ca3af; font-style: italic; padding: 16px;">Enter valid values to see timeline</div>';
     }
 }
 
