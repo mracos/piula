@@ -62,28 +62,23 @@ class MedicineApp {
     
     renderCalendar(schedule) {
         const calendarData = MedicineCalculator.getCalendarData(schedule);
-        this.calendarContainer.innerHTML = '';
+        this.calendarContainer.innerHTML = `
+            <div class="calendar-wrapper">
+                <h4 class="calendar-month-title">${calendarData.monthName}</h4>
+                <div class="calendar-weekdays">
+                    <div class="weekday">Sun</div>
+                    <div class="weekday">Mon</div>
+                    <div class="weekday">Tue</div>
+                    <div class="weekday">Wed</div>
+                    <div class="weekday">Thu</div>
+                    <div class="weekday">Fri</div>
+                    <div class="weekday">Sat</div>
+                </div>
+                <div class="calendar-days"></div>
+            </div>
+        `;
         
-        const monthTitle = document.createElement('h4');
-        monthTitle.textContent = calendarData.monthName;
-        monthTitle.style.marginBottom = '12px';
-        monthTitle.style.color = '#374151';
-        monthTitle.style.fontWeight = '600';
-        this.calendarContainer.appendChild(monthTitle);
-        
-        const header = document.createElement('div');
-        header.className = 'calendar-header';
-        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        dayNames.forEach(day => {
-            const dayElement = document.createElement('div');
-            dayElement.className = 'calendar-header-day';
-            dayElement.textContent = day;
-            header.appendChild(dayElement);
-        });
-        this.calendarContainer.appendChild(header);
-        
-        const grid = document.createElement('div');
-        grid.className = 'calendar';
+        const grid = this.calendarContainer.querySelector('.calendar-days');
         
         calendarData.calendar.forEach(day => {
             const dayElement = document.createElement('div');

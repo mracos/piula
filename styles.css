@@ -90,6 +90,11 @@ body {
     margin-bottom: 32px;
 }
 
+.calendar-section {
+    display: block;
+    width: 100%;
+}
+
 .hours-section:last-child, .calendar-section:last-child, .timeline-section:last-child {
     margin-bottom: 0;
 }
@@ -110,25 +115,41 @@ body {
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
-.calendar {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
+.calendar-wrapper {
+    display: block;
+    width: 100%;
 }
 
-.calendar-header {
+.calendar-month-title {
+    margin-bottom: 12px;
+    color: #374151;
+    font-weight: 600;
+    font-size: 18px;
+    display: block;
+    width: 100%;
+}
+
+.calendar-weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 6px;
     margin-bottom: 12px;
+    width: 100%;
 }
 
-.calendar-header-day {
+.weekday {
     text-align: center;
     font-size: 12px;
     font-weight: 600;
     color: #6b7280;
     padding: 8px 4px;
+}
+
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    width: 100%;
 }
 
 .calendar-day {
