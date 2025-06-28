@@ -113,15 +113,14 @@ body {
 .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-    margin-bottom: 16px;
+    gap: 6px;
 }
 
 .calendar-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-    margin-bottom: 8px;
+    gap: 6px;
+    margin-bottom: 12px;
 }
 
 .calendar-header-day {
@@ -142,6 +141,8 @@ body {
     position: relative;
     cursor: default;
     transition: all 0.2s ease;
+    padding: 8px;
+    min-height: 36px;
 }
 
 .calendar-day.today {
@@ -162,12 +163,17 @@ body {
 }
 
 .calendar-day.other-month {
-    color: #d1d5db;
+    color: #9ca3af;
+}
+
+.calendar-day.other-month.has-medicine {
+    background: #f3f4f6;
+    color: #6b7280;
 }
 
 .medicine-dots {
     position: absolute;
-    bottom: 2px;
+    bottom: 4px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;

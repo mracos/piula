@@ -64,6 +64,13 @@ class MedicineApp {
         const calendarData = MedicineCalculator.getCalendarData(schedule);
         this.calendarContainer.innerHTML = '';
         
+        const monthTitle = document.createElement('h4');
+        monthTitle.textContent = calendarData.monthName;
+        monthTitle.style.marginBottom = '12px';
+        monthTitle.style.color = '#374151';
+        monthTitle.style.fontWeight = '600';
+        this.calendarContainer.appendChild(monthTitle);
+        
         const header = document.createElement('div');
         header.className = 'calendar-header';
         const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -74,13 +81,6 @@ class MedicineApp {
             header.appendChild(dayElement);
         });
         this.calendarContainer.appendChild(header);
-        
-        const monthTitle = document.createElement('h4');
-        monthTitle.textContent = calendarData.monthName;
-        monthTitle.style.marginBottom = '12px';
-        monthTitle.style.color = '#374151';
-        monthTitle.style.fontWeight = '600';
-        this.calendarContainer.insertBefore(monthTitle, header);
         
         const grid = document.createElement('div');
         grid.className = 'calendar';
