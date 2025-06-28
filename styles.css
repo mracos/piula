@@ -25,7 +25,19 @@ body {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     width: 100%;
-    max-width: 600px;
+    max-width: 400px;
+}
+
+@media (min-width: 768px) {
+    .app {
+        max-width: 800px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .app {
+        max-width: 1000px;
+    }
 }
 
 .header {
@@ -137,6 +149,32 @@ body {
     margin-top: 32px;
     padding-top: 24px;
     border-top: 1px solid #e5e7eb;
+}
+
+@media (min-width: 768px) {
+    .results {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: start;
+    }
+}
+
+@media (min-width: 1200px) {
+    .calculator {
+        display: grid;
+        grid-template-columns: 400px 1fr;
+        gap: 48px;
+        align-items: start;
+    }
+    
+    .results {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
 }
 
 .results h3 {
@@ -289,15 +327,43 @@ body {
     .input-card {
         padding: 16px;
     }
+    
+    .results {
+        grid-template-columns: 1fr !important;
+        gap: 24px !important;
+    }
 }
 
 @media (max-width: 480px) {
+    body {
+        padding: 0;
+    }
+    
     .app {
         margin: 0;
         border-radius: 0;
         min-height: 100vh;
         display: flex;
         flex-direction: column;
+        max-width: none;
+    }
+    
+    .header {
+        padding: 24px 16px;
+    }
+    
+    .header-title {
+        gap: 12px;
+    }
+    
+    .icon-container {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+    
+    .header h1 {
+        font-size: 22px;
     }
     
     .calculator {
@@ -307,19 +373,82 @@ body {
     
     .inputs-container {
         gap: 12px;
+        margin-bottom: 24px;
     }
     
     .input-card {
-        padding: 12px;
+        padding: 16px 12px;
     }
     
     .input-card label {
-        font-size: 12px;
+        font-size: 11px;
         margin-bottom: 8px;
     }
     
     .input-card input {
-        font-size: 16px;
+        font-size: 18px;
         padding: 8px 0;
+    }
+    
+    .results {
+        margin-top: 24px;
+        padding-top: 20px;
+    }
+    
+    .results h3 {
+        font-size: 18px;
+        margin-bottom: 16px;
+    }
+    
+    .hours-grid {
+        gap: 6px;
+    }
+    
+    .hour-badge {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    .calendar-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .calendar-month-title {
+        font-size: 16px;
+        margin-bottom: 12px;
+    }
+    
+    .calendar-weekdays {
+        gap: 2px;
+        margin-bottom: 8px;
+        min-width: 280px;
+    }
+    
+    .weekday {
+        font-size: 10px;
+        padding: 6px 2px;
+    }
+    
+    .calendar-days {
+        gap: 2px;
+        min-width: 280px;
+    }
+    
+    .calendar-day {
+        font-size: 13px;
+        padding: 6px;
+        min-height: 32px;
+        border-radius: 6px;
+    }
+    
+    .medicine-dots {
+        bottom: 2px;
+        gap: 1px;
+    }
+    
+    .medicine-dot {
+        width: 3px;
+        height: 3px;
     }
 }
