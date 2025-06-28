@@ -1,33 +1,99 @@
 export class MedicineCalculator {
-    static calculateSchedule(startTime, intervalHours, numberOfDoses) {
+    static calculateSchedule(startTime, intervalHours, numberOfDays) {
         const schedule = [];
+        const dailyHours = [];
         const [hours, minutes] = startTime.split(':').map(Number);
         
         let currentTime = new Date();
         currentTime.setHours(hours, minutes, 0, 0);
         
-        for (let i = 0; i < numberOfDoses; i++) {
+        const hoursPerDay = Math.floor(24 / intervalHours);
+        const totalDoses = numberOfDays * hoursPerDay;
+        
+        for (let i = 0; i < totalDoses; i++) {
             const timeString = this.formatTime(currentTime);
             const dayOffset = this.getDayOffset(currentTime);
+            const date = new Date(currentTime);
             
             schedule.push({
                 time: timeString,
                 dayOffset: dayOffset,
-                displayText: this.getDisplayText(timeString, dayOffset)
+                date: date,
+                displayText: this.getDisplayText(timeString, dayOffset),
+                isToday: dayOffset === 0
             });
             
             currentTime.setHours(currentTime.getHours() + intervalHours);
         }
         
-        return schedule;
+        for (let hour = hours; hour < 24; hour += intervalHours) {
+            dailyHours.push(this.formatTime(new Date().setHours(hour, minutes, 0, 0)));
+        }
+        
+        if (hours + intervalHours >= 24) {
+            for (let hour = (hours + intervalHours) % 24; hour < hours; hour += intervalHours) {
+                if (hour >= 0) {
+                    dailyHours.push(this.formatTime(new Date().setHours(hour, minutes, 0, 0)));
+                }
+            }
+        }
+        
+        return {
+            schedule,
+            dailyHours: dailyHours.sort()
+        };
     }
     
     static formatTime(date) {
+        if (typeof date === 'number') {
+            date = new Date(date);
+        }
         return date.toLocaleTimeString('en-US', {
             hour: '2-digit',
             minute: '2-digit',
             hour12: false
         });
+    }
+    
+    static generateCalendar(year, month, medicineDates) {
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const startDate = new Date(firstDay);
+        startDate.setDate(startDate.getDate() - firstDay.getDay());
+        
+        const calendar = [];
+        const today = new Date();
+        
+        for (let i = 0; i < 42; i++) {
+            const currentDate = new Date(startDate);
+            currentDate.setDate(startDate.getDate() + i);
+            
+            const dateStr = currentDate.toDateString();
+            const medicineCount = medicineDates.filter(d => 
+                d.toDateString() === dateStr
+            ).length;
+            
+            calendar.push({
+                date: currentDate,
+                day: currentDate.getDate(),
+                isCurrentMonth: currentDate.getMonth() === month,
+                isToday: currentDate.toDateString() === today.toDateString(),
+                hasMedicine: medicineCount > 0,
+                medicineCount: medicineCount
+            });
+        }
+        
+        return calendar;
+    }
+    
+    static getCalendarData(schedule) {
+        const today = new Date();
+        const medicineDates = schedule.map(item => item.date);
+        
+        return {
+            calendar: this.generateCalendar(today.getFullYear(), today.getMonth(), medicineDates),
+            monthName: today.toLocaleString('default', { month: 'long', year: 'numeric' })
+        };
     }
     
     static getDayOffset(time) {

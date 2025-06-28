@@ -25,13 +25,25 @@
             </div>
 
             <div class="input-group">
-                <label for="doses">Number of Doses:</label>
-                <input type="number" id="doses" min="1" max="10" value="3">
+                <label for="days">How Many Days:</label>
+                <input type="number" id="days" min="1" max="30" value="7">
             </div>
 
-            <div class="results" id="results">
-                <h3>Your Schedule:</h3>
-                <ul id="scheduleList"></ul>
+            <div class="results">
+                <div class="hours-section">
+                    <h3>Daily Hours:</h3>
+                    <div id="dailyHours" class="hours-grid"></div>
+                </div>
+
+                <div class="calendar-section">
+                    <h3>Calendar View:</h3>
+                    <div id="calendar" class="calendar"></div>
+                </div>
+
+                <div class="timeline-section">
+                    <h3>All Times:</h3>
+                    <div id="timeline" class="timeline"></div>
+                </div>
             </div>
         </div>
     </main>
