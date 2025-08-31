@@ -8,6 +8,10 @@ class MedicineApp {
         this.dailyHoursContainer = document.getElementById('dailyHours');
         this.calendarContainer = document.getElementById('calendar');
         
+        // Calendar navigation state
+        this.currentCalendarDate = new Date();
+        this.currentSchedule = null;
+        
         this.init();
     }
     
@@ -59,10 +63,15 @@ class MedicineApp {
     }
     
     renderCalendar(schedule) {
-        const calendarData = MedicineCalculator.getCalendarData(schedule);
+        this.currentSchedule = schedule;
+        const calendarData = MedicineCalculator.getCalendarData(schedule, this.currentCalendarDate.getFullYear(), this.currentCalendarDate.getMonth());
         this.calendarContainer.innerHTML = `
             <div class="calendar-wrapper">
-                <h4 class="calendar-month-title">${calendarData.monthName}</h4>
+                <div class="calendar-header">
+                    <button class="calendar-nav-btn" id="prevMonth">‹</button>
+                    <h4 class="calendar-month-title">${calendarData.monthName}</h4>
+                    <button class="calendar-nav-btn" id="nextMonth">›</button>
+                </div>
                 <div class="calendar-weekdays">
                     <div class="weekday">Sun</div>
                     <div class="weekday">Mon</div>
@@ -75,6 +84,13 @@ class MedicineApp {
                 <div class="calendar-days"></div>
             </div>
         `;
+        
+        // Add navigation event listeners
+        const prevBtn = this.calendarContainer.querySelector('#prevMonth');
+        const nextBtn = this.calendarContainer.querySelector('#nextMonth');
+        
+        prevBtn.addEventListener('click', () => this.navigateMonth(-1));
+        nextBtn.addEventListener('click', () => this.navigateMonth(1));
         
         const grid = this.calendarContainer.querySelector('.calendar-days');
         
@@ -109,6 +125,13 @@ class MedicineApp {
         });
         
         this.calendarContainer.appendChild(grid);
+    }
+    
+    navigateMonth(direction) {
+        this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + direction);
+        if (this.currentSchedule) {
+            this.renderCalendar(this.currentSchedule);
+        }
     }
     
     
