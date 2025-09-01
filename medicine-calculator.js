@@ -86,13 +86,16 @@ export class MedicineCalculator {
         return calendar;
     }
     
-    static getCalendarData(schedule) {
+    static getCalendarData(schedule, year = null, month = null) {
         const today = new Date();
+        const targetYear = year !== null ? year : today.getFullYear();
+        const targetMonth = month !== null ? month : today.getMonth();
+        
         const medicineDates = schedule.map(item => item.date);
         
         return {
-            calendar: this.generateCalendar(today.getFullYear(), today.getMonth(), medicineDates),
-            monthName: today.toLocaleString('default', { month: 'long', year: 'numeric' })
+            calendar: this.generateCalendar(targetYear, targetMonth, medicineDates),
+            monthName: new Date(targetYear, targetMonth).toLocaleString('default', { month: 'long', year: 'numeric' })
         };
     }
     
