@@ -76,6 +76,17 @@ body {
     line-height: 1.2;
 }
 
+.subtitle {
+    margin-top: 16px;
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .calculator {
     padding: 32px 24px;
 }
