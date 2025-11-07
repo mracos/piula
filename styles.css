@@ -11,12 +11,25 @@ body {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 20px;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.footer {
+    text-align: center;
+    opacity: 0.7;
+    font-size: 0.9em;
+    padding: 12px;
 }
 
 .app {
@@ -178,7 +191,7 @@ body {
         gap: 48px;
         align-items: start;
     }
-    
+
     .results {
         margin-top: 0;
         padding-top: 0;
@@ -368,11 +381,11 @@ body {
         grid-template-columns: 1fr;
         gap: 16px;
     }
-    
+
     .input-card {
         padding: 16px;
     }
-    
+
     .results {
         grid-template-columns: 1fr !important;
         gap: 24px !important;
@@ -383,7 +396,7 @@ body {
     body {
         padding: 0;
     }
-    
+
     .app {
         margin: 0;
         border-radius: 0;
@@ -392,106 +405,106 @@ body {
         flex-direction: column;
         max-width: none;
     }
-    
+
     .header {
         padding: 24px 16px;
     }
-    
+
     .header-title {
         gap: 12px;
     }
-    
+
     .icon-container {
         width: 40px;
         height: 40px;
         font-size: 20px;
     }
-    
+
     .header h1 {
         font-size: 22px;
     }
-    
+
     .calculator {
         flex: 1;
         padding: 24px 16px;
     }
-    
+
     .inputs-container {
         gap: 12px;
         margin-bottom: 24px;
     }
-    
+
     .input-card {
         padding: 16px 12px;
     }
-    
+
     .input-card label {
         font-size: 11px;
         margin-bottom: 8px;
     }
-    
+
     .input-card input {
         font-size: 18px;
         padding: 8px 0;
     }
-    
+
     .results {
         margin-top: 24px;
         padding-top: 20px;
     }
-    
+
     .results h3 {
         font-size: 18px;
         margin-bottom: 16px;
     }
-    
+
     .hours-grid {
         gap: 6px;
     }
-    
+
     .hour-badge {
         padding: 8px 12px;
         font-size: 13px;
     }
-    
+
     .calendar-wrapper {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
     }
-    
+
     .calendar-month-title {
         font-size: 16px;
         margin-bottom: 12px;
     }
-    
+
     .calendar-weekdays {
         gap: 2px;
         margin-bottom: 8px;
         min-width: 280px;
     }
-    
+
     .weekday {
         font-size: 10px;
         padding: 6px 2px;
     }
-    
+
     .calendar-days {
         gap: 2px;
         min-width: 280px;
     }
-    
+
     .calendar-day {
         font-size: 13px;
         padding: 6px;
         min-height: 32px;
         border-radius: 6px;
     }
-    
+
     .medicine-dots {
         bottom: 2px;
         gap: 1px;
     }
-    
+
     .medicine-dot {
         width: 3px;
         height: 3px;
