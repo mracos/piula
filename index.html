@@ -29,20 +29,28 @@
         </header>
 
         <div class="calculator">
-            <div class="inputs-container">
-                <div class="input-card">
-                    <label for="startTime">Start Time</label>
-                    <input type="time" id="startTime" value="20:00">
+            <div>
+                <div class="inputs-container">
+                    <div class="input-card">
+                        <label for="startTime">Start Time</label>
+                        <input type="time" id="startTime" value="20:00">
+                    </div>
+
+                    <div class="input-card">
+                        <label for="interval">Every X Hours</label>
+                        <input type="number" id="interval" min="1" max="24" value="8">
+                    </div>
+
+                    <div class="input-card">
+                        <label for="days">How Many Days</label>
+                        <input type="number" id="days" min="1" max="30" value="7">
+                    </div>
                 </div>
 
-                <div class="input-card">
-                    <label for="interval">Every X Hours</label>
-                    <input type="number" id="interval" min="1" max="24" value="8">
-                </div>
-
-                <div class="input-card">
-                    <label for="days">How Many Days</label>
-                    <input type="number" id="days" min="1" max="30" value="7">
+                <div class="export-section">
+                    <button id="exportCalendar" class="export-button">
+                        📅 Add to Calendar
+                    </button>
                 </div>
             </div>
 
@@ -63,6 +71,49 @@
             <p>Made by <a href="https://mracos.com.br" target="_blank" rel="noopener">marcos ferreira</a></p>
         </footer>
     </main>
+
+    <div id="exportModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="modal-header-back" id="modalHeaderBack" aria-label="Back to options">←</button>
+                    <h2>Export to Calendar</h2>
+                    <button class="modal-close" id="closeModal" aria-label="Close">&times;</button>
+                </div>
+            <div class="modal-body">
+                <div id="calendarOptionsView" class="modal-view active">
+                    <div class="title-input-section">
+                        <label for="eventTitle">Event Title</label>
+                        <input type="text" id="eventTitle" placeholder="💊 Take Medication" value="💊 Take Medication" maxlength="100">
+                    </div>
+                    <p class="modal-description">Add your medication schedule to your calendar:</p>
+                    <div class="calendar-options">
+                        <button class="calendar-option" id="exportGoogle">
+                            <span class="calendar-icon">📅</span>
+                            <div class="calendar-details">
+                                <span class="calendar-name">Google Calendar</span>
+                            </div>
+                        </button>
+                        <button class="calendar-option" id="exportICS">
+                            <span class="calendar-icon">📥</span>
+                            <div class="calendar-details">
+                                <span class="calendar-name">Download .ics File</span>
+                                <span class="calendar-hint">Works with any calendar app</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="googleLinksView" class="modal-view">
+                    <p class="google-links-intro">Pick one of the scheduled times below to open it in Google Calendar. Each link already repeats daily at that hour until your treatment ends.</p>
+                    <div id="googleSummary" class="google-summary"></div>
+                    <div id="googleExplanation" class="google-explanation"></div>
+                    <div id="googleWarning" class="google-warning" hidden></div>
+                    <div id="googleLinksList" class="google-links-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="app.js"></script>
 </body>
 </html>

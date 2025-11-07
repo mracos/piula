@@ -1,146 +1,72 @@
 import { MedicineCalculator } from './medicine-calculator.js';
+import { CalendarView } from './calendar-view.js';
+import { ExportModal } from './export-modal.js';
 
 class MedicineApp {
     constructor() {
+        this.currentSchedule = null;
+        this.cacheElements();
+        this.calendarView = new CalendarView({
+            dailyHoursContainer: this.dailyHoursContainer,
+            calendarContainer: this.calendarContainer,
+        });
+        this.exportModal = new ExportModal({
+            modal: this.modal,
+            eventTitleInput: this.eventTitleInput,
+            intervalInput: this.intervalInput,
+            daysInput: this.daysInput,
+        });
+        this.bindEvents();
+        this.updateSchedule();
+    }
+
+    cacheElements() {
         this.startTimeInput = document.getElementById('startTime');
         this.intervalInput = document.getElementById('interval');
         this.daysInput = document.getElementById('days');
         this.dailyHoursContainer = document.getElementById('dailyHours');
         this.calendarContainer = document.getElementById('calendar');
-        
-        // Calendar navigation state
-        this.currentCalendarDate = new Date();
-        this.currentSchedule = null;
-        
-        this.init();
+        this.exportButton = document.getElementById('exportCalendar');
+        this.modal = document.getElementById('exportModal');
+        this.eventTitleInput = document.getElementById('eventTitle');
     }
-    
-    init() {
-        this.bindEvents();
-        this.updateSchedule();
-    }
-    
+
     bindEvents() {
-        this.startTimeInput.addEventListener('input', () => this.updateSchedule());
-        this.intervalInput.addEventListener('input', () => this.updateSchedule());
-        this.daysInput.addEventListener('input', () => this.updateSchedule());
+        [this.startTimeInput, this.intervalInput, this.daysInput].forEach((input) => {
+            input?.addEventListener('input', () => this.updateSchedule());
+        });
+
+        this.exportButton?.addEventListener('click', () => this.exportModal.open());
     }
-    
+
     updateSchedule() {
-        const startTime = this.startTimeInput.value;
-        const interval = parseInt(this.intervalInput.value);
-        const days = parseInt(this.daysInput.value);
-        
-        if (!startTime || !interval || !days) {
-            this.clearAll();
+        const startTime = this.startTimeInput?.value;
+        const interval = parseInt(this.intervalInput?.value, 10);
+        const days = parseInt(this.daysInput?.value, 10);
+
+        if (!this.inputsAreValid(startTime, interval, days)) {
+            this.currentSchedule = null;
+            this.calendarView.showEmptyStates();
+            this.exportModal.setSchedule(null);
             return;
         }
-        
-        if (interval < 1 || interval > 24) {
-            this.clearAll();
-            return;
-        }
-        
-        if (days < 1 || days > 30) {
-            this.clearAll();
-            return;
-        }
-        
+
         const result = MedicineCalculator.calculateSchedule(startTime, interval, days);
-        this.renderDailyHours(result.dailyHours);
-        this.renderCalendar(result.schedule);
+        this.currentSchedule = result.schedule;
+        this.calendarView.render(result);
+        this.exportModal.setSchedule(result.schedule);
     }
-    
-    renderDailyHours(dailyHours) {
-        this.dailyHoursContainer.innerHTML = '';
-        
-        dailyHours.forEach(hour => {
-            const badge = document.createElement('div');
-            badge.className = 'hour-badge';
-            badge.textContent = hour;
-            this.dailyHoursContainer.appendChild(badge);
-        });
-    }
-    
-    renderCalendar(schedule) {
-        this.currentSchedule = schedule;
-        const calendarData = MedicineCalculator.getCalendarData(schedule, this.currentCalendarDate.getFullYear(), this.currentCalendarDate.getMonth());
-        this.calendarContainer.innerHTML = `
-            <div class="calendar-wrapper">
-                <div class="calendar-header">
-                    <button class="calendar-nav-btn" id="prevMonth">‹</button>
-                    <h4 class="calendar-month-title">${calendarData.monthName}</h4>
-                    <button class="calendar-nav-btn" id="nextMonth">›</button>
-                </div>
-                <div class="calendar-weekdays">
-                    <div class="weekday">Sun</div>
-                    <div class="weekday">Mon</div>
-                    <div class="weekday">Tue</div>
-                    <div class="weekday">Wed</div>
-                    <div class="weekday">Thu</div>
-                    <div class="weekday">Fri</div>
-                    <div class="weekday">Sat</div>
-                </div>
-                <div class="calendar-days"></div>
-            </div>
-        `;
-        
-        // Add navigation event listeners
-        const prevBtn = this.calendarContainer.querySelector('#prevMonth');
-        const nextBtn = this.calendarContainer.querySelector('#nextMonth');
-        
-        prevBtn.addEventListener('click', () => this.navigateMonth(-1));
-        nextBtn.addEventListener('click', () => this.navigateMonth(1));
-        
-        const grid = this.calendarContainer.querySelector('.calendar-days');
-        
-        calendarData.calendar.forEach(day => {
-            const dayElement = document.createElement('div');
-            dayElement.className = 'calendar-day';
-            dayElement.textContent = day.day;
-            
-            if (!day.isCurrentMonth) {
-                dayElement.classList.add('other-month');
-            }
-            if (day.isToday) {
-                dayElement.classList.add('today');
-            }
-            if (day.hasMedicine) {
-                dayElement.classList.add('has-medicine');
-                
-                if (day.medicineCount > 0) {
-                    const dots = document.createElement('div');
-                    dots.className = 'medicine-dots';
-                    for (let i = 0; i < Math.min(day.medicineCount, 3); i++) {
-                        const dot = document.createElement('div');
-                        dot.className = 'medicine-dot';
-                        dots.appendChild(dot);
-                    }
-                    dayElement.appendChild(dots);
-                }
-            }
-            
-            
-            grid.appendChild(dayElement);
-        });
-        
-        this.calendarContainer.appendChild(grid);
-    }
-    
-    navigateMonth(direction) {
-        this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + direction);
-        if (this.currentSchedule) {
-            this.renderCalendar(this.currentSchedule);
+
+    inputsAreValid(startTime, interval, days) {
+        if (!startTime || Number.isNaN(interval) || Number.isNaN(days)) {
+            return false;
         }
-    }
-    
-    
-    clearAll() {
-        this.dailyHoursContainer.innerHTML = '<div style="color: #9ca3af; font-style: italic; padding: 16px;">Enter valid values to see daily hours</div>';
-        this.calendarContainer.innerHTML = '<div style="color: #9ca3af; font-style: italic; padding: 16px;">Enter valid values to see calendar</div>';
+        const intervalValid = interval >= 1 && interval <= 24;
+        const daysValid = days >= 1 && days <= 30;
+        return intervalValid && daysValid;
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', () => {
     new MedicineApp();
 });
