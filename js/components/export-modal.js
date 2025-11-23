@@ -1,4 +1,12 @@
-import { buildCalendarICS, downloadTextFile } from './ics-helpers.js';
+/**
+ * Export modal component for calendar exports
+ */
+import { buildCalendarICS, downloadTextFile } from '../services/export/ics-generator.js';
+import {
+    groupEventsByTime,
+    getFirstDaySlots,
+    generateGoogleLinkData
+} from '../services/export/google-calendar.js';
 
 export class ExportModal {
     constructor({ modal, eventTitleInput, intervalInput, daysInput }) {
@@ -109,8 +117,8 @@ export class ExportModal {
         const interval = parseInt(this.intervalInput?.value, 10);
         const days = parseInt(this.daysInput?.value, 10);
 
-        const slotOccurrences = this.groupEventsByTime(schedule);
-        const firstDaySlots = this.getFirstDaySlots(firstEvent, slotOccurrences);
+        const slotOccurrences = groupEventsByTime(schedule);
+        const firstDaySlots = getFirstDaySlots(firstEvent, slotOccurrences);
 
         if (!firstDaySlots.length) {
             this.googleLinksList.innerHTML = '<p class="google-empty">Could not generate quick links. Please use the .ics download instead.</p>';
@@ -118,38 +126,9 @@ export class ExportModal {
         }
 
         this.renderGoogleSummary(firstEvent, lastEvent, interval, days, schedule.length);
-        this.renderGoogleExplanation(schedule.length, lastEvent);
+        this.renderGoogleExplanation();
         this.renderGoogleWarning(interval);
         this.renderGoogleLinks(firstDaySlots, slotOccurrences);
-    }
-
-    groupEventsByTime(schedule) {
-        const slots = new Map();
-        schedule.forEach((event) => {
-            const key = `${event.date.getHours()}:${event.date.getMinutes()}`;
-            if (!slots.has(key)) {
-                slots.set(key, []);
-            }
-            slots.get(key).push(event);
-        });
-        return slots;
-    }
-
-    getFirstDaySlots(firstEventDate, slotOccurrences) {
-        const oneDayLater = new Date(firstEventDate.getTime() + 24 * 60 * 60 * 1000);
-        const uniqueSlots = [];
-        const seen = new Set();
-
-        slotOccurrences.forEach((events, slotKey) => {
-            const firstOccurrence = events[0];
-            if (firstOccurrence.date < oneDayLater && !seen.has(slotKey)) {
-                uniqueSlots.push({ slotKey, event: firstOccurrence });
-                seen.add(slotKey);
-            }
-        });
-
-        uniqueSlots.sort((a, b) => a.event.date - b.event.date);
-        return uniqueSlots;
     }
 
     renderGoogleSummary(firstEvent, lastEvent, interval, days, totalOccurrences) {
@@ -184,7 +163,7 @@ export class ExportModal {
         `;
     }
 
-    renderGoogleExplanation(totalOccurrences, endDate) {
+    renderGoogleExplanation() {
         if (!this.googleExplanation) return;
         this.googleExplanation.innerHTML = `
             <strong>Why multiple links?</strong> Google Calendar's does not support hourly spacing so we need to create many instances, one for each hour.
@@ -205,39 +184,21 @@ export class ExportModal {
 
     renderGoogleLinks(firstDaySlots, slotOccurrences) {
         const title = this.eventTitleInput?.value || '💊 Take Medication';
-        const encodedTitle = encodeURIComponent(title);
 
         firstDaySlots.forEach(({ slotKey, event }) => {
             const occurrences = slotOccurrences.get(slotKey) || [event];
-            const lastOccurrence = occurrences[occurrences.length - 1];
-            const slotCount = occurrences.length;
-            const startDate = this.formatGoogleDate(event.date);
-            const endDate = this.formatGoogleDate(event.date);
-            const details = encodeURIComponent('Medication reminder');
-            let recurParam = '';
-
-            if (slotCount > 1) {
-                // Use both COUNT and UNTIL for better compatibility across web and mobile
-                const untilDate = this.formatGoogleDate(lastOccurrence.date);
-                const recurRule = `RRULE:FREQ=DAILY;COUNT=${slotCount};UNTIL=${untilDate}`;
-                recurParam = `&recur=${encodeURIComponent(recurRule)}`;
-            }
-
-            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodedTitle}&details=${details}&dates=${startDate}/${endDate}${recurParam}`;
-            const timeLabel = event.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const rangeLabel = this.formatRangeLabel(occurrences[0].date, lastOccurrence.date);
-            const doseLabel = slotCount === 1 ? '1 dose total' : `${slotCount} doses total`;
+            const linkData = generateGoogleLinkData({ title, event, occurrences });
 
             const link = document.createElement('a');
-            link.href = url;
+            link.href = linkData.url;
             link.target = '_blank';
             link.rel = 'noopener';
             link.className = 'google-link';
             link.innerHTML = `
                 <div class="google-link-info">
-                    <span class="google-link-time">Daily at ${timeLabel}</span>
-                    <span class="google-link-range">${rangeLabel}</span>
-                    <span class="google-link-count">${doseLabel}</span>
+                    <span class="google-link-time">Daily at ${linkData.timeLabel}</span>
+                    <span class="google-link-range">${linkData.rangeLabel}</span>
+                    <span class="google-link-count">${linkData.doseLabel}</span>
                 </div>
                 <span class="google-link-action">Open →</span>
             `;
@@ -246,21 +207,11 @@ export class ExportModal {
         });
     }
 
-    formatRangeLabel(start, end) {
-        const startLabel = `${start.toLocaleDateString([], { month: 'short', day: 'numeric' })} · ${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-        const endLabel = `${end.toLocaleDateString([], { month: 'short', day: 'numeric' })} · ${end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-        return `${startLabel} → ${endLabel}`;
-    }
-
     exportToICS() {
         if (!this.ensureSchedule()) return;
         const title = this.eventTitleInput?.value || '💊 Take Medication';
         const content = buildCalendarICS(this.schedule, title);
         downloadTextFile(content, 'medication-schedule.ics');
         this.close();
-    }
-
-    formatGoogleDate(date) {
-        return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
     }
 }

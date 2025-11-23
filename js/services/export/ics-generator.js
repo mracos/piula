@@ -1,7 +1,14 @@
-export function formatICSDate(date) {
-    return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-}
+/**
+ * ICS file generator for calendar exports
+ */
+import { formatICSDate } from '../../utils/date-utils.js';
 
+/**
+ * Build ICS calendar content
+ * @param {Array} schedule - Array of schedule events
+ * @param {string} title - Event title
+ * @returns {string} ICS file content
+ */
 export function buildCalendarICS(schedule, title) {
     const content = [
         'BEGIN:VCALENDAR',
@@ -41,6 +48,12 @@ export function buildCalendarICS(schedule, title) {
     return content.join('\r\n');
 }
 
+/**
+ * Download text content as a file
+ * @param {string} content - File content
+ * @param {string} filename - Filename to save as
+ * @param {string} mime - MIME type
+ */
 export function downloadTextFile(content, filename, mime = 'text/calendar;charset=utf-8') {
     const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);

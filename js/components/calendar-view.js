@@ -1,4 +1,7 @@
-import { MedicineCalculator } from './medicine-calculator.js';
+/**
+ * Calendar view component for displaying schedule
+ */
+import { MedicineCalculator } from '../services/medicine-calculator.js';
 
 export class CalendarView {
     constructor({ dailyHoursContainer, calendarContainer }) {
