@@ -35,8 +35,15 @@ export function buildGoogleCalendarUrl({ title, startDate, endDate, details, rec
  * @returns {string}
  */
 export function buildDailyRecurrenceRule(count, untilDate) {
-    const until = formatGoogleDate(untilDate);
-    return `RRULE:FREQ=DAILY;COUNT=${count};UNTIL=${until}`;
+    const parts = ['RRULE:FREQ=DAILY'];
+
+    if (Number.isFinite(count) && count > 0) {
+        parts.push(`COUNT=${count}`);
+    } else if (untilDate instanceof Date) {
+        parts.push(`UNTIL=${formatGoogleDate(untilDate)}`);
+    }
+
+    return parts.join(';');
 }
 
 /**
