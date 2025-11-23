@@ -24,6 +24,7 @@ class MedicineApp {
         this.startTimeInput = document.getElementById('startTime');
         this.intervalInput = document.getElementById('interval');
         this.daysInput = document.getElementById('days');
+        this.totalPillsInput = document.getElementById('totalPills');
         this.dailyHoursContainer = document.getElementById('dailyHours');
         this.calendarContainer = document.getElementById('calendar');
         this.exportButton = document.getElementById('exportCalendar');
@@ -32,11 +33,47 @@ class MedicineApp {
     }
 
     bindEvents() {
-        [this.startTimeInput, this.intervalInput, this.daysInput].forEach((input) => {
-            input?.addEventListener('input', () => this.updateSchedule());
+        this.startTimeInput?.addEventListener('input', () => this.updateSchedule());
+
+        [this.intervalInput, this.daysInput].forEach((input) => {
+            input?.addEventListener('input', () => {
+                this.updateTotalPillsFromDays();
+                this.updateSchedule();
+            });
+        });
+
+        this.totalPillsInput?.addEventListener('input', () => {
+            this.updateDaysFromTotalPills();
+            this.updateSchedule();
         });
 
         this.exportButton?.addEventListener('click', () => this.exportModal.open());
+    }
+
+    getDosesPerDay() {
+        const interval = parseInt(this.intervalInput?.value, 10);
+        if (Number.isNaN(interval) || interval < 1 || interval > 24) return 0;
+        return Math.floor(24 / interval);
+    }
+
+    updateTotalPillsFromDays() {
+        const days = parseInt(this.daysInput?.value, 10);
+        const dosesPerDay = this.getDosesPerDay();
+        if (Number.isNaN(days) || days < 1 || dosesPerDay === 0) return;
+        const totalPills = days * dosesPerDay;
+        if (this.totalPillsInput) {
+            this.totalPillsInput.value = totalPills;
+        }
+    }
+
+    updateDaysFromTotalPills() {
+        const totalPills = parseInt(this.totalPillsInput?.value, 10);
+        const dosesPerDay = this.getDosesPerDay();
+        if (Number.isNaN(totalPills) || totalPills < 1 || dosesPerDay === 0) return;
+        const days = Math.ceil(totalPills / dosesPerDay);
+        if (this.daysInput) {
+            this.daysInput.value = days;
+        }
     }
 
     updateSchedule() {
