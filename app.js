@@ -17,6 +17,7 @@ class MedicineApp {
             daysInput: this.daysInput,
         });
         this.bindEvents();
+        this.populateTotalPillsOptions();
         this.updateSchedule();
     }
 
@@ -24,28 +25,31 @@ class MedicineApp {
         this.startTimeInput = document.getElementById('startTime');
         this.intervalInput = document.getElementById('interval');
         this.daysInput = document.getElementById('days');
-        this.totalPillsInput = document.getElementById('totalPills');
+        this.pickerViewport = document.querySelector('.picker-viewport');
+        this.pickerList = document.getElementById('totalPillsList');
         this.dailyHoursContainer = document.getElementById('dailyHours');
         this.calendarContainer = document.getElementById('calendar');
         this.exportButton = document.getElementById('exportCalendar');
         this.modal = document.getElementById('exportModal');
         this.eventTitleInput = document.getElementById('eventTitle');
+        this.isScrolling = false;
+        this.scrollTimeout = null;
     }
 
     bindEvents() {
         this.startTimeInput?.addEventListener('input', () => this.updateSchedule());
 
-        [this.intervalInput, this.daysInput].forEach((input) => {
-            input?.addEventListener('input', () => {
-                this.updateTotalPillsFromDays();
-                this.updateSchedule();
-            });
-        });
-
-        this.totalPillsInput?.addEventListener('input', () => {
-            this.updateDaysFromTotalPills();
+        this.intervalInput?.addEventListener('input', () => {
+            this.populateTotalPillsOptions();
             this.updateSchedule();
         });
+
+        this.daysInput?.addEventListener('input', () => {
+            this.scrollPickerToCurrentDays();
+            this.updateSchedule();
+        });
+
+        this.pickerViewport?.addEventListener('scroll', () => this.handlePickerScroll());
 
         this.exportButton?.addEventListener('click', () => this.exportModal.open());
     }
@@ -56,23 +60,95 @@ class MedicineApp {
         return Math.floor(24 / interval);
     }
 
-    updateTotalPillsFromDays() {
-        const days = parseInt(this.daysInput?.value, 10);
+    populateTotalPillsOptions() {
+        if (!this.pickerList) return;
         const dosesPerDay = this.getDosesPerDay();
-        if (Number.isNaN(days) || days < 1 || dosesPerDay === 0) return;
-        const totalPills = days * dosesPerDay;
-        if (this.totalPillsInput) {
-            this.totalPillsInput.value = totalPills;
+        if (dosesPerDay === 0) return;
+
+        this.pickerList.innerHTML = '';
+        for (let day = 1; day <= 30; day++) {
+            const pills = day * dosesPerDay;
+            const item = document.createElement('div');
+            item.className = 'picker-item';
+            item.dataset.days = day;
+            item.dataset.pills = pills;
+            item.textContent = pills;
+            item.addEventListener('click', () => this.selectPickerItem(day));
+            this.pickerList.appendChild(item);
+        }
+
+        // Wait for DOM to render before scrolling
+        requestAnimationFrame(() => {
+            this.scrollPickerToCurrentDays(false);
+        });
+    }
+
+    scrollPickerToCurrentDays(smooth = true) {
+        const days = parseInt(this.daysInput?.value, 10) || 7;
+        const clampedDays = Math.max(1, Math.min(30, days));
+        const itemHeight = 40;
+        const targetScroll = (clampedDays - 1) * itemHeight;
+
+        if (this.pickerViewport) {
+            this.isScrolling = true;
+            if (smooth) {
+                this.pickerViewport.scrollTo({
+                    top: targetScroll,
+                    behavior: 'smooth'
+                });
+                setTimeout(() => {
+                    this.isScrolling = false;
+                    this.updatePickerSelection();
+                }, 300);
+            } else {
+                this.pickerViewport.scrollTop = targetScroll;
+                this.isScrolling = false;
+                this.updatePickerSelection();
+            }
         }
     }
 
-    updateDaysFromTotalPills() {
-        const totalPills = parseInt(this.totalPillsInput?.value, 10);
-        const dosesPerDay = this.getDosesPerDay();
-        if (Number.isNaN(totalPills) || totalPills < 1 || dosesPerDay === 0) return;
-        const days = Math.ceil(totalPills / dosesPerDay);
+    handlePickerScroll() {
+        if (this.isScrolling) return;
+
+        clearTimeout(this.scrollTimeout);
+        this.scrollTimeout = setTimeout(() => {
+            this.updatePickerSelection();
+            this.updateDaysFromPicker();
+        }, 100);
+    }
+
+    updatePickerSelection() {
+        if (!this.pickerViewport || !this.pickerList) return;
+
+        const itemHeight = 40;
+        const scrollTop = this.pickerViewport.scrollTop;
+        const selectedIndex = Math.round(scrollTop / itemHeight);
+
+        this.pickerList.querySelectorAll('.picker-item').forEach((item, index) => {
+            item.classList.toggle('selected', index === selectedIndex);
+        });
+    }
+
+    selectPickerItem(day) {
         if (this.daysInput) {
+            this.daysInput.value = day;
+        }
+        this.scrollPickerToCurrentDays();
+        this.updateSchedule();
+    }
+
+    updateDaysFromPicker() {
+        if (!this.pickerViewport) return;
+
+        const itemHeight = 40;
+        const scrollTop = this.pickerViewport.scrollTop;
+        const selectedIndex = Math.round(scrollTop / itemHeight);
+        const days = selectedIndex + 1;
+
+        if (this.daysInput && days >= 1 && days <= 30) {
             this.daysInput.value = days;
+            this.updateSchedule();
         }
     }
 

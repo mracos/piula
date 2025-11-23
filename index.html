@@ -46,9 +46,16 @@
                         <input type="number" id="days" min="1" max="30" value="7">
                     </div>
 
-                    <div class="input-card">
-                        <label for="totalPills">Total Pills</label>
-                        <input type="number" id="totalPills" min="1" max="500" value="21">
+                    <div class="input-card picker-card">
+                        <label>Total Pills</label>
+                        <div class="wheel-picker" id="totalPillsPicker">
+                            <div class="picker-fade picker-fade-top"></div>
+                            <div class="picker-viewport">
+                                <div class="picker-list" id="totalPillsList"></div>
+                            </div>
+                            <div class="picker-fade picker-fade-bottom"></div>
+                            <div class="picker-highlight"></div>
+                        </div>
                     </div>
                 </div>
 
