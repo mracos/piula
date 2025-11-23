@@ -217,7 +217,9 @@ export class ExportModal {
             let recurParam = '';
 
             if (slotCount > 1) {
-                const recurRule = `RRULE:FREQ=DAILY;UNTIL=${this.formatGoogleDate(lastOccurrence.date)}`;
+                // Use both COUNT and UNTIL for better compatibility across web and mobile
+                const untilDate = this.formatGoogleDate(lastOccurrence.date);
+                const recurRule = `RRULE:FREQ=DAILY;COUNT=${slotCount};UNTIL=${untilDate}`;
                 recurParam = `&recur=${encodeURIComponent(recurRule)}`;
             }
 
